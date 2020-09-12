@@ -1,0 +1,25 @@
+# https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: Cider Action
+description: Github Action for Cider, the App Store submission tool for Apple apps
+author: aaronsky
+
+branding:
+  color: orange
+  icon: coffee
+
+inputs:
+  version:
+    description: Cider version
+    default: latest
+    required: false
+  args:
+    description: Arguments to pass to Cider
+    required: true
+  workdir:
+    description: Working directory (below repository root)
+    default: '.'
+    required: false
+
+runs:
+  using: node12
+  main: dist/index.js

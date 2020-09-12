@@ -1,0 +1,52 @@
+{
+  "name": "cider-action",
+  "description": "Github Action for Cider, the App Store submission tool for Apple apps",
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "tsc && ncc build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pre-commit": "pretty-quick --staged && npm run build && git add dist"
+  },
+  "repository": "cidertool/cider-action",
+  "keywords": [
+    "actions",
+    "cider",
+    "ios",
+    "macos",
+    "apple",
+    "appstore",
+    "appstoreconnect"
+  ],
+  "author": "Aaron Sky <cider@skyaaron.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cidertool/cider-action/issues"
+  },
+  "homepage": "https://github.com/cidertool/cider-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.5",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^4.0.0",
+    "@actions/http-client": "^1.0.8",
+    "@actions/tool-cache": "^1.6.0",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.10.1",
+    "@types/semver": "^7.3.3",
+    "@vercel/ncc": "^0.24.0",
+    "dotenv": "^8.2.0",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.1",
+    "pretty-quick": "^3.0.2",
+    "typescript": "^4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pre-commit"
+    }
+  }
+}
