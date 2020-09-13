@@ -29,13 +29,19 @@ jobs:
         with:
           version: ${{ matrix.version }}
           args: init --skip-prompts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check
         uses: ./
         with:
           version: ${{ matrix.version }}
           args: check --debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Release
         uses: ./
         with:
           version: ${{ matrix.version }}
           args: help release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
