@@ -17,7 +17,7 @@ This action makes it easy to use [Cider](https://cidertool.github.io/cider) in y
 
 ```yaml
 - uses: actions/checkout@v2
-- uses: cidertool/cider-action@v1
+- uses: cidertool/cider-action@v0
   with:
       # Version of Cider to use. For example, 'v0.0.2'
       # Default: latest
