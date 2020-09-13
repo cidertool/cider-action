@@ -28,7 +28,7 @@ jobs:
         uses: ./
         with:
           version: ${{ matrix.version }}
-          args: init --skip-prompts
+          args: init --skip-prompt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check
