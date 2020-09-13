@@ -5,7 +5,7 @@ author: aaronsky
 
 branding:
   color: orange
-  icon: coffee
+  icon: upload-cloud
 
 inputs:
   version:
