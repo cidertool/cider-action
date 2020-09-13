@@ -245,27 +245,43 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
 const exec = __importStar(__webpack_require__(1514));
 const cider_1 = __webpack_require__(9855);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const version = core.getInput('version') || 'latest';
-            const args = core.getInput('args', { required: true });
-            const workdir = core.getInput('workdir');
-            if (workdir && workdir !== '.') {
-                core.info(`📂 Using ${workdir} as working directory...`);
-            }
-            const cider = new cider_1.Cider(version);
-            const ciderPath = yield cider.install();
-            core.info('🍻 Running Cider...');
-            yield exec.exec(ciderPath, args.split(' '), { cwd: workdir });
-        }
-        catch (error) {
-            core.setFailed(error);
-        }
-    });
-}
-run();
+const result_1 = __webpack_require__(8076);
+result_1.tryCatch(() => __awaiter(void 0, void 0, void 0, function* () {
+    const version = core.getInput('version') || 'latest';
+    const args = core.getInput('args', { required: true });
+    const workdir = core.getInput('workdir');
+    if (workdir && workdir !== '.') {
+        core.info(`📂 Using ${workdir} as working directory...`);
+    }
+    const cider = new cider_1.Cider(version);
+    const ciderPath = yield cider.install();
+    core.info('🍻 Running Cider...');
+    yield exec.exec(ciderPath, args.split(' '), { cwd: workdir });
+}), error => {
+    core.setFailed(error);
+});
 //# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ 8076:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.tryCatch = void 0;
+const ok = (ok) => ({ _tag: 'ok', ok });
+const err = (err) => ({ _tag: 'err', err });
+exports.tryCatch = (fn, onError) => {
+    try {
+        return ok(fn());
+    }
+    catch (error) {
+        return err(onError(error));
+    }
+};
+//# sourceMappingURL=result.js.map
 
 /***/ }),
 

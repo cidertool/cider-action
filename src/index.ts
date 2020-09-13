@@ -1,9 +1,10 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { Cider } from './cider'
+import { tryCatch } from './result'
 
-async function run() {
-    try {
+tryCatch(
+    async () => {
         const version = core.getInput('version') || 'latest'
         const args = core.getInput('args', { required: true })
         const workdir = core.getInput('workdir')
@@ -18,9 +19,8 @@ async function run() {
 
         core.info('🍻 Running Cider...')
         await exec.exec(ciderPath, args.split(' '), { cwd: workdir })
-    } catch (error) {
+    },
+    error => {
         core.setFailed(error)
     }
-}
-
-run()
+)
