@@ -53,5 +53,6 @@
     "hooks": {
       "pre-commit": "npm run pre-commit"
     }
-  }
+  },
+  "version": "0.1.0"
 }
