@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc && ncc build",
-    "test": "jest",
+    "test": "jest --coverage",
     "pre-commit": "pretty-quick --staged && npm run build && git add dist"
   },
   "repository": "cidertool/cider-action",
@@ -43,7 +43,6 @@
     "husky": "^4.3.0",
     "jest": "^26.4.2",
     "jest-circus": "^26.4.2",
-    "jest-runtime": "^26.4.2",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.2",
     "tmp": "^0.2.1",

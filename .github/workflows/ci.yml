@@ -4,9 +4,51 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
   pull_request:
+    paths-ignore:
+      - '**.md'
 
 jobs:
+  pre-checkin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Sync Changes
+        run: npm run pre-commit
+      - name: Check for Uncommitted Changes
+        run: |
+          git diff-index --quiet HEAD || {
+            git status --porcelain
+            echo "::warning:: Unsynced changes on HEAD. Please run 'npm run pre-commit' and push, or ensure Husky hooks are installed."
+          }
+
+  unit-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Node Dependencies
+        run: npm ci
+      - name: Run Tests
+        run: npm test
+      - name: Upload Coverage to Codecov
+        if: success()
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/clover.xml
+
   integration-test:
     strategy:
       fail-fast: false

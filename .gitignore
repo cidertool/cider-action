@@ -1,6 +1,7 @@
 # Build artifacts
 /.dev
-lib/
+/lib
+.DS_Store
 
 # Logs
 logs
@@ -38,3 +39,6 @@ jspm_packages/
 # dotenv environment variables file
 .env
 .env.test
+
+# coverage output
+/coverage
