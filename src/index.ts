@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import * as cider from './cider'
+import { Cider } from './cider'
 
 async function run() {
     try {
@@ -12,7 +12,9 @@ async function run() {
             core.info(`📂 Using ${workdir} as working directory...`)
         }
 
-        const ciderPath = await cider.install(version)
+        const cider = new Cider(version)
+
+        const ciderPath = await cider.install()
 
         core.info('🍻 Running Cider...')
         await exec.exec(ciderPath, args.split(' '), { cwd: workdir })

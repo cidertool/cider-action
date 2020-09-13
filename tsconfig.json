@@ -11,5 +11,5 @@
     "esModuleInterop": true,
     "sourceMap": true
   },
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "exclude": ["node_modules", "**/*.test.ts", "test/setup.ts"]
 }

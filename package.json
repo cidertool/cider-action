@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc && ncc build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "pre-commit": "pretty-quick --staged && npm run build && git add dist"
   },
   "repository": "cidertool/cider-action",
@@ -29,19 +29,25 @@
   "dependencies": {
     "@actions/core": "^1.2.5",
     "@actions/exec": "^1.0.4",
-    "@actions/github": "^4.0.0",
     "@actions/http-client": "^1.0.8",
     "@actions/tool-cache": "^1.6.0",
     "semver": "^7.3.2"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.13",
     "@types/node": "^14.10.1",
     "@types/semver": "^7.3.3",
+    "@types/tmp": "^0.2.0",
     "@vercel/ncc": "^0.24.0",
     "dotenv": "^8.2.0",
     "husky": "^4.3.0",
+    "jest": "^26.4.2",
+    "jest-circus": "^26.4.2",
+    "jest-runtime": "^26.4.2",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.2",
+    "tmp": "^0.2.1",
+    "ts-jest": "^26.3.0",
     "typescript": "^4.0.2"
   },
   "husky": {

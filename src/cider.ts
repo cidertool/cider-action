@@ -1,118 +1,93 @@
-import * as os from 'os'
+import os from 'os'
 import * as path from 'path'
+import { SemVer, parse as parseSemver } from 'semver'
+import { GitHub, Release } from './github'
 import * as cache from '@actions/tool-cache'
-import * as github from '@actions/github'
-import * as semver from 'semver'
 
-const octokit = github.getOctokit('', { auth: {} })
+export class Cider {
+    rawVersion: string
+    semver: SemVer | null
 
-export async function install(version: string): Promise<string> {
-    const platform = os.platform()
-    const arch = os.arch()
+    readonly os = os.platform()
+    readonly arch = os.arch()
+    readonly github = new GitHub()
 
-    // identify release corresponding to version
-    const release = await releaseForVersion(version)
-    if (!release) {
-        throw new Error(`no release found matching ${version}`)
+    constructor(version: string) {
+        this.rawVersion = version
+        this.semver = parseSemver(version)
     }
-    const asset = await assetForRelease(release, platform, arch)
-    if (!asset) {
-        throw new Error(
-            `no compatible version of Cider for ${platform} and ${arch}`
+
+    async install() {
+        let release: Release | null = null
+        if (this.rawVersion == 'latest') {
+            release = await this.github.getLatestRelease()
+        } else if (this.semver) {
+            release = await this.github.getRelease(`v${this.semver.version}`)
+        }
+        if (!release) {
+            throw new Error(`no release found matching ${this.rawVersion}`)
+        }
+
+        const assetName = this.archiveName()
+        const asset = await this.github.getReleaseAsset(release.id, assetName)
+        if (!asset) {
+            throw new Error(
+                `no asset found on release ${release.tag_name} for ${assetName}`
+            )
+        }
+
+        // download binary archive to file
+        const downloadPath = await cache.downloadTool(
+            asset.browser_download_url
         )
+        // extract binary from archive
+        const extractionPath = await this.extractArchive(downloadPath)
+        // cache binary
+        const cacheDir = await cache.cacheDir(
+            extractionPath,
+            'cider-action',
+            release.tag_name
+        )
+
+        const executable = path.join(cacheDir, this.executableName())
+        return executable
     }
-    const downloadURL = asset.browser_download_url
 
-    // download binary archive to file
-    const downloadPath = await cache.downloadTool(downloadURL)
-
-    // extract binary from archive
-    const extractionPath = await extractArchive(downloadPath)
-
-    // cache binary
-    const cacheDir = await cache.cacheDir(
-        extractionPath,
-        'cider-action',
-        release.tag_name
-    )
-
-    // return path to binary in cache
-    const binaryName = ''
-    const executable = path.join(cacheDir, binaryName)
-    return executable
-}
-
-async function releaseForVersion(version: string) {
-    const options = {
-        owner: 'cidertool',
-        repo: 'cider',
-    }
-    if (version === 'latest') {
-        const release = await octokit.repos.getLatestRelease(options)
-        return release.data
-    }
-    const semVersion = semver.parse(version)
-    if (!semVersion) {
-        return null
-    }
-    const release = await octokit.repos.getReleaseByTag({
-        ...options,
-        tag: semVersion.format(),
-    })
-    return release.data
-}
-
-async function assetForRelease(
-    release: { id: number },
-    platform: string,
-    arch: string
-) {
-    const response = await octokit.repos.listReleaseAssets({
-        owner: 'cidertool',
-        repo: 'cider',
-        release_id: release.id,
-    })
-    const assets = response.data
-
-    const name = assetName(platform, arch)
-
-    return assets.find(asset => asset.name === name)
-}
-
-const assetName = (platform: string, arch: string) => {
-    let ext: string
-    switch (platform) {
-        case 'win32':
-            platform = 'windows'
+    private archiveName() {
+        let os: string, arch: string, ext: string
+        if (this.os === 'win32') {
+            os = 'windows'
             ext = 'zip'
-        default:
+        } else {
             // 'darwin', 'linux', 'openbsd', 'freebsd'
-            // platform = platform
+            os = this.os
             ext = 'tar.gz'
-    }
-    switch (arch) {
-        case 'x64':
+        }
+        if (this.arch === 'x64') {
             arch = 'x86_64'
-        default:
+        } else {
             // 'arm64'
-            // arch = arch
-            break
+            arch = this.arch
+        }
+        return `cider_${os}_${arch}.${ext}`
     }
-    return `cider_${platform}_${arch}.${ext}`
-}
 
-async function extractArchive(file: string): Promise<string> {
-    const ext = path.extname(file)
-    switch (ext) {
-        case '.gz':
-            return await cache.extractTar(file)
-        case '.zip':
+    private async extractArchive(file: string): Promise<string> {
+        if (this.os === 'win32') {
             return await cache.extractZip(file)
-        case '.7z':
-            return await cache.extract7z(file)
-        case '.xar':
-            return await cache.extractXar(file)
-        default:
-            throw new Error(`unsupported archive extension: ${ext}`)
+        } else {
+            // 'darwin', 'linux', 'openbsd', 'freebsd'
+            return await cache.extractTar(file)
+        }
+    }
+
+    private executableName() {
+        switch (this.os) {
+            case 'win32':
+                return 'cider.exe'
+            default:
+                // 'darwin', 'linux', 'openbsd', 'freebsd'
+                return 'cider'
+        }
     }
 }
