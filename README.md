@@ -1,7 +1,7 @@
 <p align="center">
   <!-- <img alt="Cider logo" src="assets/go.png" height="150" /> -->
   <h3 align="center">Cider Action</h3>
-  <p align="center">A Github Action for Cider, the App Store submission tool for Apple apps</p>
+  <p align="center">A Github Action for <a href="https://github.com/cidertool/cider">Cider</a>, the App Store submission tool for Apple apps</p>
 </p>
 
 ---
