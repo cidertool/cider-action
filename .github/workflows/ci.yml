@@ -43,6 +43,8 @@ jobs:
         run: npm ci
       - name: Run Tests
         run: npm test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Coverage to Codecov
         if: success()
         uses: codecov/codecov-action@v1
