@@ -3,6 +3,7 @@ import * as path from 'path'
 import { SemVer, parse as parseSemver } from 'semver'
 import { GitHub, Release } from './github'
 import * as cache from '@actions/tool-cache'
+import * as core from '@actions/core'
 
 export class Cider {
     rawVersion: string
@@ -28,6 +29,8 @@ export class Cider {
             throw new Error(`no release found matching ${this.rawVersion}`)
         }
 
+        core.info(`✅ Cider version found: ${release.tag_name}`)
+
         const assetName = this.archiveName()
         const asset = await this.github.getReleaseAsset(release.id, assetName)
         if (!asset) {
@@ -37,19 +40,28 @@ export class Cider {
         }
 
         // download binary archive to file
+        core.info(`⬇️ Downloading ${asset.browser_download_url}...`)
         const downloadPath = await cache.downloadTool(
             asset.browser_download_url
         )
+        core.debug(`Downloaded to ${downloadPath}`)
+
         // extract binary from archive
+        core.info('📦 Extracting Cider...')
         const extractionPath = await this.extractArchive(downloadPath)
+        core.debug(`Extracted to ${extractionPath}`)
+
         // cache binary
         const cacheDir = await cache.cacheDir(
             extractionPath,
             'cider-action',
             release.tag_name
         )
+        core.debug(`Cached to ${cacheDir}`)
 
         const executable = path.join(cacheDir, this.executableName())
+        core.debug(`Exe path is ${executable}`)
+
         return executable
     }
 

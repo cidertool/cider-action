@@ -45,6 +45,7 @@ const path = __importStar(__webpack_require__(5622));
 const semver_1 = __webpack_require__(1383);
 const github_1 = __webpack_require__(5928);
 const cache = __importStar(__webpack_require__(7784));
+const core = __importStar(__webpack_require__(2186));
 class Cider {
     constructor(version) {
         this.os = os_1.default.platform();
@@ -65,18 +66,25 @@ class Cider {
             if (!release) {
                 throw new Error(`no release found matching ${this.rawVersion}`);
             }
+            core.info(`✅ Cider version found: ${release.tag_name}`);
             const assetName = this.archiveName();
             const asset = yield this.github.getReleaseAsset(release.id, assetName);
             if (!asset) {
                 throw new Error(`no asset found on release ${release.tag_name} for ${assetName}`);
             }
             // download binary archive to file
+            core.info(`⬇️ Downloading ${asset.browser_download_url}...`);
             const downloadPath = yield cache.downloadTool(asset.browser_download_url);
+            core.debug(`Downloaded to ${downloadPath}`);
             // extract binary from archive
+            core.info('📦 Extracting Cider...');
             const extractionPath = yield this.extractArchive(downloadPath);
+            core.debug(`Extracted to ${extractionPath}`);
             // cache binary
             const cacheDir = yield cache.cacheDir(extractionPath, 'cider-action', release.tag_name);
+            core.debug(`Cached to ${cacheDir}`);
             const executable = path.join(cacheDir, this.executableName());
+            core.debug(`Exe path is ${executable}`);
             return executable;
         });
     }
