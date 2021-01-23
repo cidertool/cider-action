@@ -38,7 +38,7 @@ Run this in any context you see fit to use Cider to update app metadata or submi
 
 ## Contributing
 
-Contributions are always welcome. If you want to get involved or you just want to offer feedback, please see [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md) for details.
+Contributions are always welcome. If you want to get involved or you just want to offer feedback, please see [`CONTRIBUTING.md`](https://github.com/cidertool/.github/blob/main/CONTRIBUTING.md) for details.
 
 ## License
 
