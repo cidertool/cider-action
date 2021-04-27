@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "lib": ["es6"],
     "newLine": "lf",
     "outDir": "./lib",
     "rootDir": "./src",
