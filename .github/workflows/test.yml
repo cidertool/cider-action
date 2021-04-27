@@ -59,7 +59,7 @@ jobs:
           - windows-latest
         version:
           - latest
-          - v0.0.2
+          - v0.1.0
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
